@@ -6,7 +6,7 @@ import time
 from db import init_db, add_item, get_items, remove_item, update_price, get_all_items
 from wb import extract_articule, get_price
 
-TOKEN = "ВСТАВЬ_СЮДА_ТОКЕН"
+TOKEN = "8661089957:AAHB816uUEyrOU1gpY7eQOuQKnsaQArzrck"
 
 bot = telebot.TeleBot(TOKEN)
 
