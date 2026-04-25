@@ -146,7 +146,7 @@ def manual_check(message):
     items = get_items(message.from_user.id)
 
     if not items:
-        bot.
+        bot.send_message(...)
         send_message(message.chat.id, "📭 Нет товаров для проверки.", reply_markup=main_menu())
         return
 
