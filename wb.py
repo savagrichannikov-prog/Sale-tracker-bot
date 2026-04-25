@@ -2,31 +2,28 @@ import re
 import requests
 
 
-def extract_articule(url: str):
-    """
-    Пытаемся достать артикул WB из любых ссылок.
-    Работает для:
-    - /catalog/12345678/detail.aspx
-    - ?nm=12345678
-    - если пользователь просто отправил число
-    """
+def extract_articule(text: str):
+    if not text:
+        return None
 
-    # если человек отправил просто цифры
-    if url.strip().isdigit():
-        return url.strip()
+    text = text.strip()
+
+    # если отправили просто число
+    if text.isdigit():
+        return text
 
     # /catalog/12345678/
-    match = re.search(r"/catalog/(\d+)", url)
+    match = re.search(r"/catalog/(\d+)", text)
     if match:
         return match.group(1)
 
     # nm=12345678
-    match = re.search(r"nm=(\d+)", url)
+    match = re.search(r"nm=(\d+)", text)
     if match:
         return match.group(1)
 
-    # если где-то в ссылке есть большое число (часто артикул)
-    match = re.search(r"(\d{5,12})", url)
+    # если есть большое число в ссылке
+    match = re.search(r"(\d{5,12})", text)
     if match:
         return match.group(1)
 
@@ -34,7 +31,10 @@ def extract_articule(url: str):
 
 
 def get_price(articule: str):
-    api_url = f"https://card.wb.ru/cards/v1/detail?appType=1&curr=rub&dest=-1257786&spp=30&nm={articule}"
+    api_url = (
+        "https://card.wb.ru/cards/v1/detail"
+        f"?appType=1&curr=rub&dest=-1257786&spp=30&nm={articule}"
+    )
 
     r = requests.get(api_url, timeout=10)
     data = r.json()
@@ -45,7 +45,9 @@ def get_price(articule: str):
 
     product = products[0]
 
-    price = product.get("salePriceU")  # цена в копейках
+    # цена со скидкой
+    price = product.get("salePriceU")
+
     if price is None:
         return None
 
